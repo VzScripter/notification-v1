@@ -31,3 +31,5 @@ exports['notification-v1']:addToAllPlayers(message, type, [time])
 Código: `vzscr`
 
 Design: `araujox7`
+
+Caso tenha algum erro, considere reportar (com prints de preferência) na aba [Issues](https://github.com/VzScripter/notification-v1/issues/new)
