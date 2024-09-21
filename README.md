@@ -5,7 +5,7 @@
 # Funções Exportáveis:
 
 ### Função "add"
-Essa função irá adicionar uma notificação a tela de um jogador específico.
+Essa função irá adicionar uma notificação na tela de um jogador específico.
 
 ## Server
 ```lua
@@ -17,7 +17,7 @@ exports['notification-v1']:add(message, type, [time, priority, tickSended])
 ```
 
 ### Função "addToAllPlayers"
-Essa função irá adicionar uma notificação a tela de todos os jogadores do servidor (Recomendado usar pois sincroniza a notificação com todos os jogadores, tanto antes quanto depois de entrar no server).
+Essa função irá adicionar uma notificação na tela de todos os jogadores do servidor (Recomendado usar pois sincroniza a notificação com todos os jogadores, tanto antes quanto depois de entrar no server).
 
 ## Server
 ```lua
