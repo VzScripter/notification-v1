@@ -25,3 +25,8 @@ Essa função irá adicionar uma notificação na tela de todos os jogadores do 
 ```lua
 exports['notification-v1']:addToAllPlayers(message, type, [time])
 ```
+
+# Créditos
+
+Código: `vzscr`
+Design: `araujox7`
