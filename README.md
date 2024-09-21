@@ -1,6 +1,6 @@
 # 📧 Sistema de Notificação
 
-- Um sistema simples para e efetivo para criar notificações para jogadores.
+- Um sistema simples para e efetivo para criar notificações aos jogadores.
 
 # Funções Exportáveis:
 
