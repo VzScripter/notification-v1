@@ -15,3 +15,11 @@ exports['notification-v1']:add(element, message, type, [time, priority, tickSend
 ```lua
 exports['notification-v1']:add(message, type, [time, priority, tickSended])
 ```
+
+### Função "addToAllPlayers"
+Essa função irá adicionar uma notificação a tela de todos os jogadores do servidor (Recomendado usar pois sincroniza a notificação com todos os jogadores, tanto antes quanto depois de entrar no server).
+
+## Server
+```lua
+exports['notification-v1']:addToAllPlayers(message, type, [time])
+```
