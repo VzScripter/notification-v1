@@ -2,7 +2,8 @@ Download: https://github.com/VzScripter/notification-v1/releases
 
 # 📧 Sistema de Notificação
 
-- Um sistema simples para e efetivo para criar notificações aos jogadores.
+- Um sistema simples para e efetivo para criar notificações aos jogadores
+- Você pode criar temas personalizados para a notificação e os jogadores podem alterar com o comando /tema e testar com /teste
 
 ![image](example/image.png)
 ![image2](example/image2.png)
