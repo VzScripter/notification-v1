@@ -4,6 +4,9 @@ Download: https://github.com/VzScripter/notification-v1/releases
 
 - Um sistema simples para e efetivo para criar notificações aos jogadores.
 
+![image](example/image.png)
+![image2](example/image2.png)
+
 # Funções Exportáveis:
 
 ### Função "add"
