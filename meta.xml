@@ -2,6 +2,7 @@
     <!-- meta configs -->
 
     <export function = 'add' type = 'shared'/>
+    <export function = 'addToAllPlayers' type = 'server'/>
 
     <!-- / -->
 

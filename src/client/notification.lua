@@ -101,7 +101,7 @@ function Notification:render()
     
             dxDrawSvgRectangle(xNotification, yNotification, respc(378), bgHeight, respc(12), rgba(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a * alpha))
     
-            dxDrawImage(xNotification + respc(338), yNotification + respc(8), respc(30), respc(34), 'public/count.png', 0, 0, 0, rgba((v.type.accentColor and v.type.accentColor[1] or defaultTypeColor.r), (v.type.accentColor and v.type.accentColor[2] or defaultTypeColor.g), (v.type.accentColor and v.type.accentColor[3] or defaultTypeColor.b), (0.65 * countAlpha) * alpha))
+            dxDrawImage(xNotification + respc(338), yNotification + respc(8), respc(30), respc(34), 'public/image/count.png', 0, 0, 0, rgba((v.type.accentColor and v.type.accentColor[1] or defaultTypeColor.r), (v.type.accentColor and v.type.accentColor[2] or defaultTypeColor.g), (v.type.accentColor and v.type.accentColor[3] or defaultTypeColor.b), (0.65 * countAlpha) * alpha))
             if (v.cache.count.number > 999) then
                 dxDrawText('+999x', xNotification + respc(338), yNotification + respc(8), respc(30), respc(34), rgba(255, 255, 255, countAlpha * alpha), 1, self.font.message, 'center', 'center')
             else
@@ -114,10 +114,10 @@ function Notification:render()
             dxDrawRectangle(xNotification + respc(20), yNotification + respc(40 + (v.cache.height * self.font.height) + 18), respc(334), 1, rgba(divColor.r, divColor.g, divColor.b, divColor.a * alpha))
     
             dxDrawText(calcTimeBasedOnTick(v.cache.tick), xNotification + respc(20), yNotification + respc(40 + (v.cache.height * self.font.height) + 18 + 10), respc(334), 1, rgba(textColor.r, textColor.g, textColor.b, textColor.a * alpha), 1, self.font.message, 'left', 'top', false, true)
-            dxDrawImage(xNotification + respc(20), yNotification + respc(40 + (v.cache.height * self.font.height) + 18 + 34), respc(338), respc(4), 'public/bar.png', 0, 0, 0, rgba((v.type.accentColor and v.type.accentColor[1] or defaultTypeColor.r), (v.type.accentColor and v.type.accentColor[2] or defaultTypeColor.g), (v.type.accentColor and v.type.accentColor[3] or defaultTypeColor.b), 0.35 * alpha))
+            dxDrawImage(xNotification + respc(20), yNotification + respc(40 + (v.cache.height * self.font.height) + 18 + 34), respc(338), respc(4), 'public/image/bar.png', 0, 0, 0, rgba((v.type.accentColor and v.type.accentColor[1] or defaultTypeColor.r), (v.type.accentColor and v.type.accentColor[2] or defaultTypeColor.g), (v.type.accentColor and v.type.accentColor[3] or defaultTypeColor.b), 0.35 * alpha))
             
             local barProgress = math.min(respc(338 * ((getTickCount() - v.cache.tick) / v.time)), respc(338))
-            dxDrawImageSection(xNotification + respc(20), yNotification + respc(40 + (v.cache.height * self.font.height) + 18 + 34), barProgress, respc(4), 0, 0, barProgress, respc(4), 'public/bar.png', 0, 0, 0, rgba((v.type.accentColor and v.type.accentColor[1] or defaultTypeColor.r), (v.type.accentColor and v.type.accentColor[2] or defaultTypeColor.g), (v.type.accentColor and v.type.accentColor[3] or defaultTypeColor.b), 1 * alpha))
+            dxDrawImageSection(xNotification + respc(20), yNotification + respc(40 + (v.cache.height * self.font.height) + 18 + 34), barProgress, respc(4), 0, 0, barProgress, respc(4), 'public/image/bar.png', 0, 0, 0, rgba((v.type.accentColor and v.type.accentColor[1] or defaultTypeColor.r), (v.type.accentColor and v.type.accentColor[2] or defaultTypeColor.g), (v.type.accentColor and v.type.accentColor[3] or defaultTypeColor.b), 1 * alpha))
             
             y = y + (bgHeight + respc(14))    
         end
