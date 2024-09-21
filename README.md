@@ -1,19 +1,19 @@
-#📧Sistema de Notificação
+# 📧Sistema de Notificação
 
 Um sistema simples para e efetivo para criar notificações para jogadores.
 
 -
 
-##Funções Exportáveis:
+# Funções Exportáveis:
 
-### Função "add"
+## Função "add"
 Essa função irá adicionar uma notificação a tela de um jogador específico.
 
-##Server
+## Server
 ```lua
 exports['notification-v1']:add(element, message, type, [time, priority, tickSended])
 ```
-##Client
+## Client
 ```lua
 exports['notification-v1']:add(message, type, [time, priority, tickSended])
 ```
