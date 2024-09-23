@@ -14,15 +14,21 @@ function Notification:constructor()
         list = {};
     }
 
-    self.font = {}
-    self.font.title = dxCreateFont('public/font/RobotoCondensed-Regular.ttf', respc(11));
-    self.font.message = dxCreateFont('public/font/RobotoCondensed-Regular.ttf', respc(9.5));
+    self.events = {
+        render = function()
+            self:render()
+        end;
+    }
+
+    self.font = {
+        title = dxCreateFont('public/font/RobotoCondensed-Regular.ttf', respc(11));
+        message = dxCreateFont('public/font/RobotoCondensed-Regular.ttf', respc(9.5));
+    }
+    
     self.font.height = dxGetFontHeight(1, self.font.message)
 end
 
 function Notification:render()
-    local self = Notification
-
     local y = self.parent.y
 
     local backgroundColor = {
@@ -52,74 +58,84 @@ function Notification:render()
         b = lerp:create('defaultType_b', self.theme.defaultType[3], self.theme.defaultType[3], 0.1);
     }
 
-    for i, v in pairs(self.notifications.list) do
+    for i = #self.notifications.list, 1, -1 do
+        local v = self.notifications.list[i]
+
         if (v.cache.alpha[2] == 0 and (getTickCount() - v.cache.alpha[3]) > 800) then
             table.remove(self.notifications.list, i)
-        else
-            local bgHeight = ((v.cache.height * respc(self.font.height)) + respc(39 + 57))
 
-            if ((getTickCount() - v.cache.tick) >= v.time and v.cache.alpha[2] == 1) then
-                v.cache.alpha[2] = 0
-                v.cache.alpha[3] = getTickCount()
-    
-                v.cache.position.x[2] = 0
-                v.cache.position.x[3] = getTickCount()
+            if (#self.notifications.list == 0) then
+                self.rendering = false
+                
+                removeEventHandler('onClientRender', root, self.events.render)
             end
+        else
+            if (y < screen.y) then
+                local bgHeight = ((v.cache.height * respc(self.font.height)) + respc(39 + 57))
+
+                if ((getTickCount() - v.cache.tick) >= v.time and v.cache.alpha[2] == 1) then
+                    v.cache.alpha[2] = 0
+                    v.cache.alpha[3] = getTickCount()
+        
+                    v.cache.position.x[2] = 0
+                    v.cache.position.x[3] = getTickCount()
+                end
+        
+                if (v.cache.position.y[2] ~= y) then
+                    if (v.cache.position.y[1] == 0) then
+                        v.cache.position.y[1] = y
+                    end
+        
+                    v.cache.position.y[2] = y
+                    v.cache.position.y[3] = getTickCount()
+                end
+        
+                local alpha = interpolateBetween(v.cache.alpha[1], 0, 0, v.cache.alpha[2], 0, 0, (getTickCount() - v.cache.alpha[3]) / 300, 'Linear')
+                local xPosition = interpolateBetween(v.cache.position.x[1], 0, 0, v.cache.position.x[2], 0, 0, (getTickCount() - v.cache.position.x[3]) / 500, 'OutQuad')
+                local yPosition = interpolateBetween(v.cache.position.y[1], 0, 0, v.cache.position.y[2], 0, 0, (getTickCount() - v.cache.position.y[3]) / 500, 'OutQuad')
     
-            if (v.cache.position.y[2] ~= y) then
-                if (v.cache.position.y[1] == 0) then
-                    v.cache.position.y[1] = y
+                local countAlpha = interpolateBetween(v.cache.count.alpha[1], 0, 0, v.cache.count.alpha[2], 0, 0, (getTickCount() - v.cache.count.alpha[3]) / 500, 'Linear')
+        
+                if (v.cache.alpha[2] == alpha) then
+                    v.cache.alpha[1] = alpha
+                end
+        
+                if (v.cache.position.x[2] == xPosition) then
+                    v.cache.position.x[1] = xPosition
+                end
+        
+                if (v.cache.position.y[2] == yPosition) then
+                    v.cache.position.y[1] = yPosition
                 end
     
-                v.cache.position.y[2] = y
-                v.cache.position.y[3] = getTickCount()
+                if (v.cache.count.alpha[2] == countAlpha) then
+                    v.cache.count.alpha[1] = countAlpha
+                end
+        
+                local xNotification, yNotification = (self.parent.x * xPosition), yPosition
+        
+                dxDrawSvgRectangle(xNotification, yNotification, respc(378), bgHeight, respc(12), rgba(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a * alpha))
+        
+                dxDrawImage(xNotification + respc(338), yNotification + respc(8), respc(30), respc(34), 'public/image/count.png', 0, 0, 0, rgba((v.type.accentColor and v.type.accentColor[1] or defaultTypeColor.r), (v.type.accentColor and v.type.accentColor[2] or defaultTypeColor.g), (v.type.accentColor and v.type.accentColor[3] or defaultTypeColor.b), (0.65 * countAlpha) * alpha))
+                if (v.cache.count.number > 999) then
+                    dxDrawText('+999x', xNotification + respc(338), yNotification + respc(8), respc(30), respc(34), rgba(255, 255, 255, countAlpha * alpha), 1, self.font.message, 'center', 'center')
+                else
+                    dxDrawText(v.cache.count.number..'x', xNotification + respc(338), yNotification + respc(8), respc(30), respc(34), rgba(255, 255, 255, countAlpha * alpha), 1, self.font.message, 'center', 'center')
+                end
+                
+                dxDrawText(v.type.title, xNotification + respc(20), yNotification + respc(18), respc(315), respc(26), rgba((v.type.accentColor and v.type.accentColor[1] or defaultTypeColor.r), (v.type.accentColor and v.type.accentColor[2] or defaultTypeColor.g), (v.type.accentColor and v.type.accentColor[3] or defaultTypeColor.b), alpha), 1, self.font.title, 'left', 'top', false, true)
+                dxDrawText(v.message, xNotification + respc(20), yNotification + respc(40), respc(315), respc(v.cache.height * self.font.height), rgba(textColor.r, textColor.g, textColor.b, textColor.a * alpha), 1, self.font.message, 'left', 'top', false, true)
+        
+                dxDrawRectangle(xNotification + respc(20), yNotification + respc(40 + (v.cache.height * self.font.height) + 18), respc(334), 1, rgba(divColor.r, divColor.g, divColor.b, divColor.a * alpha))
+        
+                dxDrawText(calcTimeBasedOnTick(v.cache.tick), xNotification + respc(20), yNotification + respc(40 + (v.cache.height * self.font.height) + 18 + 10), respc(334), 1, rgba(textColor.r, textColor.g, textColor.b, textColor.a * alpha), 1, self.font.message, 'left', 'top', false, true)
+                dxDrawImage(xNotification + respc(20), yNotification + respc(40 + (v.cache.height * self.font.height) + 18 + 34), respc(338), respc(4), 'public/image/bar.png', 0, 0, 0, rgba((v.type.accentColor and v.type.accentColor[1] or defaultTypeColor.r), (v.type.accentColor and v.type.accentColor[2] or defaultTypeColor.g), (v.type.accentColor and v.type.accentColor[3] or defaultTypeColor.b), 0.35 * alpha))
+                
+                local barProgress = math.min(respc(338 * ((getTickCount() - v.cache.tick) / v.time)), respc(338))
+                dxDrawImageSection(xNotification + respc(20), yNotification + respc(40 + (v.cache.height * self.font.height) + 18 + 34), barProgress, respc(4), 0, 0, barProgress, respc(4), 'public/image/bar.png', 0, 0, 0, rgba((v.type.accentColor and v.type.accentColor[1] or defaultTypeColor.r), (v.type.accentColor and v.type.accentColor[2] or defaultTypeColor.g), (v.type.accentColor and v.type.accentColor[3] or defaultTypeColor.b), 1 * alpha))
+                
+                y = y + (bgHeight + respc(14))    
             end
-    
-            local alpha = interpolateBetween(v.cache.alpha[1], 0, 0, v.cache.alpha[2], 0, 0, (getTickCount() - v.cache.alpha[3]) / 300, 'Linear')
-            local xPosition = interpolateBetween(v.cache.position.x[1], 0, 0, v.cache.position.x[2], 0, 0, (getTickCount() - v.cache.position.x[3]) / 500, 'OutQuad')
-            local yPosition = interpolateBetween(v.cache.position.y[1], 0, 0, v.cache.position.y[2], 0, 0, (getTickCount() - v.cache.position.y[3]) / 500, 'OutQuad')
-
-            local countAlpha = interpolateBetween(v.cache.count.alpha[1], 0, 0, v.cache.count.alpha[2], 0, 0, (getTickCount() - v.cache.count.alpha[3]) / 500, 'Linear')
-    
-            if (v.cache.alpha[2] == alpha) then
-                v.cache.alpha[1] = alpha
-            end
-    
-            if (v.cache.position.x[2] == xPosition) then
-                v.cache.position.x[1] = xPosition
-            end
-    
-            if (v.cache.position.y[2] == yPosition) then
-                v.cache.position.y[1] = yPosition
-            end
-
-            if (v.cache.count.alpha[2] == countAlpha) then
-                v.cache.count.alpha[1] = countAlpha
-            end
-    
-            local xNotification, yNotification = (self.parent.x * xPosition), yPosition
-    
-            dxDrawSvgRectangle(xNotification, yNotification, respc(378), bgHeight, respc(12), rgba(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a * alpha))
-    
-            dxDrawImage(xNotification + respc(338), yNotification + respc(8), respc(30), respc(34), 'public/image/count.png', 0, 0, 0, rgba((v.type.accentColor and v.type.accentColor[1] or defaultTypeColor.r), (v.type.accentColor and v.type.accentColor[2] or defaultTypeColor.g), (v.type.accentColor and v.type.accentColor[3] or defaultTypeColor.b), (0.65 * countAlpha) * alpha))
-            if (v.cache.count.number > 999) then
-                dxDrawText('+999x', xNotification + respc(338), yNotification + respc(8), respc(30), respc(34), rgba(255, 255, 255, countAlpha * alpha), 1, self.font.message, 'center', 'center')
-            else
-                dxDrawText(v.cache.count.number..'x', xNotification + respc(338), yNotification + respc(8), respc(30), respc(34), rgba(255, 255, 255, countAlpha * alpha), 1, self.font.message, 'center', 'center')
-            end
-            
-            dxDrawText(v.type.title, xNotification + respc(20), yNotification + respc(18), respc(315), respc(26), rgba((v.type.accentColor and v.type.accentColor[1] or defaultTypeColor.r), (v.type.accentColor and v.type.accentColor[2] or defaultTypeColor.g), (v.type.accentColor and v.type.accentColor[3] or defaultTypeColor.b), alpha), 1, self.font.title, 'left', 'top', false, true)
-            dxDrawText(v.message, xNotification + respc(20), yNotification + respc(40), respc(315), respc(v.cache.height * self.font.height), rgba(textColor.r, textColor.g, textColor.b, textColor.a * alpha), 1, self.font.message, 'left', 'top', false, true)
-    
-            dxDrawRectangle(xNotification + respc(20), yNotification + respc(40 + (v.cache.height * self.font.height) + 18), respc(334), 1, rgba(divColor.r, divColor.g, divColor.b, divColor.a * alpha))
-    
-            dxDrawText(calcTimeBasedOnTick(v.cache.tick), xNotification + respc(20), yNotification + respc(40 + (v.cache.height * self.font.height) + 18 + 10), respc(334), 1, rgba(textColor.r, textColor.g, textColor.b, textColor.a * alpha), 1, self.font.message, 'left', 'top', false, true)
-            dxDrawImage(xNotification + respc(20), yNotification + respc(40 + (v.cache.height * self.font.height) + 18 + 34), respc(338), respc(4), 'public/image/bar.png', 0, 0, 0, rgba((v.type.accentColor and v.type.accentColor[1] or defaultTypeColor.r), (v.type.accentColor and v.type.accentColor[2] or defaultTypeColor.g), (v.type.accentColor and v.type.accentColor[3] or defaultTypeColor.b), 0.35 * alpha))
-            
-            local barProgress = math.min(respc(338 * ((getTickCount() - v.cache.tick) / v.time)), respc(338))
-            dxDrawImageSection(xNotification + respc(20), yNotification + respc(40 + (v.cache.height * self.font.height) + 18 + 34), barProgress, respc(4), 0, 0, barProgress, respc(4), 'public/image/bar.png', 0, 0, 0, rgba((v.type.accentColor and v.type.accentColor[1] or defaultTypeColor.r), (v.type.accentColor and v.type.accentColor[2] or defaultTypeColor.g), (v.type.accentColor and v.type.accentColor[3] or defaultTypeColor.b), 1 * alpha))
-            
-            y = y + (bgHeight + respc(14))    
         end
     end
 end
@@ -179,7 +195,7 @@ function Notification:add(message, notificationType, time, priority, tickSended)
     if (not self.rendering) then
         self.rendering = true
         
-        addEventHandler('onClientRender', root, self.render)
+        addEventHandler('onClientRender', root, self.events.render)
     end
 end
 
